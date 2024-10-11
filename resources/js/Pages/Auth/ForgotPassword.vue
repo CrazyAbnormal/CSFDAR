@@ -1,22 +1,22 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { Head, useForm } from "@inertiajs/vue3";
+import AuthenticationCard from "@/Components/AuthenticationCard.vue";
+import AuthenticationCardLogo from "@/Components/AuthenticationCardLogo.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
 
 defineProps({
     status: String,
 });
 
 const form = useForm({
-    email: '',
+    email: "",
 });
 
 const submit = () => {
-    form.post(route('password.email'));
+    form.post(route("password.email"));
 };
 </script>
 
@@ -25,13 +25,15 @@ const submit = () => {
 
     <AuthenticationCard id="AuthenticationCard">
         <div class="text-center">
-               <AuthenticationCardLogo />
-        </div>  
-        
-        <h1 class="text-center">FORGOT PASSWORD</h1>     
+            <AuthenticationCardLogo />
+        </div>
+
+        <h1 class="text-center">FORGOT PASSWORD</h1>
 
         <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+            Forgot your password? No problem. Just let us know your email
+            address and we will email you a password reset link that will allow
+            you to choose a new one.
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -54,7 +56,10 @@ const submit = () => {
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <PrimaryButton
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
                     Email Password Reset Link
                 </PrimaryButton>
             </div>
@@ -63,17 +68,16 @@ const submit = () => {
 </template>
 
 <style>
-    #AuthenticationCard {
-        background: url(https://cdn.dribbble.com/users/6117646/screenshots/14975149/media/8f26446e227baeb76f1ae01e8dc1c558.gif);
-         width: 100vw;
-         height: 100vh;
-         z-index:1;
-         margin: 0;
-        padding: 0;
-        background-color: black;
-        display: flex;
-        justify-content: contain;
-        align-items: center;
-    }
-
+#AuthenticationCard {
+    background-image: url("/images/dar-bg.png");
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    display: flex;
+    justify-content: contain;
+    align-items: center;
+}
 </style>

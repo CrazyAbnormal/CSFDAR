@@ -130,17 +130,17 @@ const getDimension = (index,dimension_id) => {
 
 };
 
-// const signaturePad = ref(null);
-// const canvas = document.querySelector('.signature-pad canvas');
+const signaturePad = ref(null);
+const canvas = document.querySelector('.signature-pad canvas');
 
 onMounted(() => {
     AOS.init();
 
 
-    // signaturePad.value = new SignaturePad(signaturePad.value);
-    // const canvas = signaturePad.value;
-    // canvas.width = 400;
-    // canvas.height = 200;
+    signaturePad.value = new SignaturePad(signaturePad.value);
+    const canvas = signaturePad.value;
+    canvas.width = 400;
+    canvas.height = 200;
 
     const currentURL = window.location.href;
     // Extract query parameters from the URL
@@ -167,13 +167,13 @@ onMounted(() => {
 const saveCSF = async () => {
     formSubmitted.value = true;
 
-    // const canvas = document.querySelector('.signature-pad');
-    // const ctx = canvas.getContext('2d');
+    const canvas = document.querySelector('.signature-pad');
+    const ctx = canvas.getContext('2d');
     
-    // const imageDataUrl = canvas.toDataURL();
+    const imageDataUrl = canvas.toDataURL();
 
     // Include the data URL in your form data
-    // form.signature = imageDataUrl;
+    form.signature = imageDataUrl;
    
     let captcha_code = Math.random(); 
      // Function to generate a new CAPTCHA image
@@ -202,7 +202,7 @@ const saveCSF = async () => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post('/csf_submission', form);     
+                axios.post('/csfdar_submission', form);     
             }
         });
     } catch (error) {
@@ -236,23 +236,23 @@ const updateIsComplaint = (index ,rate_score)=> {
 
 };
 
-// const clearSignature = () => {
-//     new SignaturePad(signaturePad.value);
-// };
+const clearSignature = () => {
+    new SignaturePad(signaturePad.value);
+};
 
-// watch(
-//     () => props.errors.captcha,
-//     (value) => {
-//         if(value){
-//             Swal.fire({
-//                 title: "Error Captcha",
-//                 text: "Wrong captcha code!" ,
-//                 icon: "error",         
-//             })
-//         }
-//     }
+watch(
+    () => props.errors.captcha,
+    (value) => {
+        if(value){
+            Swal.fire({
+                title: "Error Captcha",
+                text: "Wrong captcha code!" ,
+                icon: "error",         
+            })
+        }
+    }
      
-// );
+);
 
 watch(
     () => props.errors,

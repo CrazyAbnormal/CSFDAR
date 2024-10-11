@@ -1,13 +1,13 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import AuthenticationCard from "@/Components/AuthenticationCard.vue";
+import AuthenticationCardLogo from "@/Components/AuthenticationCardLogo.vue";
+import Checkbox from "@/Components/Checkbox.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { router } from "@inertiajs/vue3";
 
 defineProps({
     canResetPassword: Boolean,
@@ -15,17 +15,18 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
 });
 
 const submit = () => {
-    form.transform(data => ({
+    form.transform((data) => ({
         ...data,
-        remember: form.remember ? 'on' : '',
-    })).post('/login', { // Hardcoded URL
-        onFinish: () => form.reset('password'),
+        remember: form.remember ? "on" : "",
+    })).post("/login", {
+        // Hardcoded URL
+        onFinish: () => form.reset("password"),
     });
 };
 </script>
@@ -35,19 +36,16 @@ const submit = () => {
 
     <AuthenticationCard id="AuthenticationCard">
         <div class="text-center">
-               <AuthenticationCardLogo />
+            <AuthenticationCardLogo />
+        </div>
 
-        </div>     
-     
-        <h1 class="text-center">SIGNIN</h1>     
+        <h1 class="text-center">SIGNIN</h1>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
 
-        
-
-        <form @submit.prevent="submit"  >
+        <form @submit.prevent="submit">
             <div>
                 <InputLabel for="email" value="Email" />
                 <TextInput
@@ -87,7 +85,11 @@ const submit = () => {
                     Forgot your password?
                 </Link> -->
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <PrimaryButton
+                    class="ms-4"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
                     Log in
                 </PrimaryButton>
             </div>
@@ -96,22 +98,21 @@ const submit = () => {
 </template>
 
 <style>
-    #AuthenticationCard {
-        background: url(https://cdn.dribbble.com/users/6117646/screenshots/14975149/media/8f26446e227baeb76f1ae01e8dc1c558.gif);
-         width: 100vw;
-         height: 100vh;
-         z-index:1;
-         margin: 0;
-        padding: 0;
-        background-color: black;
-        display: flex;
-        justify-content: contain;
-        align-items: center;
-    }
+#AuthenticationCard {
+    background-image: url("/images/dar-wtf.gif");
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    display: flex;
+    justify-content: contain;
+    align-items: center;
+}
 
-    #email, #password{
-        padding:10px
-    }
-
+#email,
+#password {
+    padding: 10px;
+}
 </style>
-
