@@ -13,7 +13,7 @@
         "laravel/jetstream": "^4.2",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "mews/captcha": "^3.4",
+        "mews/captcha": "*",
         "spatie/laravel-pdf": "^1.4",
         "tightenco/ziggy": "^1.0"
     },
