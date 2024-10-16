@@ -106,6 +106,7 @@ defineProps({
                 text-align: center;
                 margin-left: 10%;
                 margin-right: 10%;
+                margin-top: 10%;
             "
         >
             Customer Relation Management System
@@ -117,7 +118,8 @@ defineProps({
 
 <style>
 #app {
-    background-image: url("/images/dar-bg.png");
+    background-image: url("/images/dar-wtf.gif");
+    background-size: cover;
     width: 100vw;
     height: 100vh;
     z-index: 1;
