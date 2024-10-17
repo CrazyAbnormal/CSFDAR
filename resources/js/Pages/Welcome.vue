@@ -36,7 +36,7 @@ defineProps({
                 />
                 <span
                     class="self-center text-2xl font-semibold whitespace-nowrap"
-                    >Department of Science and Technology</span
+                    >Department of Agrarian Reform</span
                 >
             </a>
             <div
@@ -106,7 +106,6 @@ defineProps({
                 text-align: center;
                 margin-left: 10%;
                 margin-right: 10%;
-                margin-top: 10%;
             "
         >
             Customer Relation Management System
@@ -118,8 +117,7 @@ defineProps({
 
 <style>
 #app {
-    background-image: url("/images/dar-wtf.gif");
-    background-size: cover;
+    background-image: url("/images/dar-bg.png");
     width: 100vw;
     height: 100vh;
     z-index: 1;

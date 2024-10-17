@@ -16,7 +16,6 @@ import Swal from 'sweetalert2';
         status: String,
         errors: Object,
         captcha_img: String,
-        date_display: String,
     });
 
 
@@ -131,17 +130,17 @@ const getDimension = (index,dimension_id) => {
 
 };
 
-// const signaturePad = ref(null);
-// const canvas = document.querySelector('.signature-pad canvas');
+const signaturePad = ref(null);
+const canvas = document.querySelector('.signature-pad canvas');
 
 onMounted(() => {
     AOS.init();
 
 
-    // signaturePad.value = new SignaturePad(signaturePad.value);
-    // const canvas = signaturePad.value;
-    // canvas.width = 400;
-    // canvas.height = 200;
+    signaturePad.value = new SignaturePad(signaturePad.value);
+    const canvas = signaturePad.value;
+    canvas.width = 400;
+    canvas.height = 200;
 
     const currentURL = window.location.href;
     // Extract query parameters from the URL
@@ -159,7 +158,7 @@ onMounted(() => {
     Swal.fire({
         title: "Disclaimer",
         icon: "warning",
-        text: "The DOST is committed to protect and respect your personal data privacy. All information collected will only be used for documentation purposes and will not be published in any platform.",
+        text: "The DAR is committed to protect and respect your personal data privacy. All information collected will only be used for documentation purposes and will not be published in any platform.",
     });
 });
 
@@ -168,13 +167,13 @@ onMounted(() => {
 const saveCSF = async () => {
     formSubmitted.value = true;
 
-    // const canvas = document.querySelector('.signature-pad');
-    // const ctx = canvas.getContext('2d');
+    const canvas = document.querySelector('.signature-pad');
+    const ctx = canvas.getContext('2d');
     
-    // const imageDataUrl = canvas.toDataURL();
+    const imageDataUrl = canvas.toDataURL();
 
     // Include the data URL in your form data
-    // form.signature = imageDataUrl;
+    form.signature = imageDataUrl;
    
     let captcha_code = Math.random(); 
      // Function to generate a new CAPTCHA image
@@ -203,7 +202,7 @@ const saveCSF = async () => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post('/csf_submission', form);     
+                axios.post('/csfdar_submission', form);     
             }
         });
     } catch (error) {
@@ -237,23 +236,23 @@ const updateIsComplaint = (index ,rate_score)=> {
 
 };
 
-// const clearSignature = () => {
-//     new SignaturePad(signaturePad.value);
-// };
+const clearSignature = () => {
+    new SignaturePad(signaturePad.value);
+};
 
-// watch(
-//     () => props.errors.captcha,
-//     (value) => {
-//         if(value){
-//             Swal.fire({
-//                 title: "Error Captcha",
-//                 text: "Wrong captcha code!" ,
-//                 icon: "error",         
-//             })
-//         }
-//     }
+watch(
+    () => props.errors.captcha,
+    (value) => {
+        if(value){
+            Swal.fire({
+                title: "Error Captcha",
+                text: "Wrong captcha code!" ,
+                icon: "error",         
+            })
+        }
+    }
      
-// );
+);
 
 watch(
     () => props.errors,
@@ -282,8 +281,8 @@ watch(
         class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <img src="../../../../public/images/dost-logo.jpg" class="h-8" alt="DOST Logo">
-                <span class="self-center lg:text-2xl md:text-base sm:text-sm font-semibold whitespace-nowrap dark:text-white text-black">Department of Science and Technology </span>
+                <img src="../../../../public/images/dar-logo.jpg" class="h-8" alt="DAR Logo">
+                <span class="self-center lg:text-2xl md:text-base sm:text-sm font-semibold whitespace-nowrap dark:text-white text-black">Department of Agrarian Reform</span>
             </a>
         </div>
     </nav>
@@ -293,7 +292,6 @@ watch(
             data-aos-duration="2000" 
             data-aos-delay="500" 
         >
-    
 
             <v-row justify="center" class="py-3 bg-gray-200 w-full">
                 <v-col cols="12" md="8" sm="6">
@@ -308,7 +306,7 @@ watch(
                                         data-aos-delay="500"
                                         class="mx-auto sm:mb-0" 
                                         style="width:200px; height:200px" 
-                                        src="../../../../public/images/dost-logo.jpg" 
+                                        src="../../../../public/images/dar-logo.jpg" 
                                         alt="..">
                                     </div>
                                     <span 
@@ -316,7 +314,7 @@ watch(
                                     data-aos="fade-down" 
                                     data-aos-duration="500" 
                                     data-aos-delay="500"
-                                    >CUSTOMER SATISFACTION FEEDBACK 
+                                    >CUSTOMER SATISFACTION FEEDBACK
                                 </span><br>
 
                                 
@@ -346,16 +344,14 @@ watch(
                                             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 ">This questionaire aims to solicit your honest assessment of our services. Please take a minute in filling out this form and help us serve you better.</p>
                                             <div>
 
-                                                <v-text-field   
-                                                    v-if="date_display[0].is_displayed == 1"                                 
+                                                <v-text-field                                    
                                                     v-model="form.date" 
                                                     type="date" 
                                                     label="Date"
                                                     variant="outlined" 
                                                 >
                                                 </v-text-field>
-
-
+                                                
                                                 <v-text-field    
                                                     v-if="form.is_complaint == true"                                
                                                     v-model="form.email" 
@@ -545,15 +541,16 @@ watch(
                                                     <v-btn-toggle class="mb-5" v-model="form.dimension_form.rate_score[index]" v-for="option in options" :key="option.value"
                                                     :rules="[() => formSubmitted ? !!form.dimension_form.rate_score[index] || 'This selection is required' : true]"
                                                     >     
-                                                        <v-btn @click="updateIsComplaint(index , form.dimension_form.rate_score[index])"  rounded class="mr-2 bg-gray-200" :value="option.value" color="secondary" >
-                                                            <v-icon :color="form.dimension_form.rate_score[index] === option.value ? option.color : 'gray'" size="40">{{ option.icon }}</v-icon><br>
-                                                            <label>{{ option.label }}</label>
-                                                        </v-btn>      
-
+                                                    <v-btn @click="updateIsComplaint(index , form.dimension_form.rate_score[index])"  rounded class="mr-2 bg-gray-200" :value="option.value" color="secondary" >
+                                                        <v-icon :color="form.dimension_form.rate_score[index] === option.value ? option.color : 'gray'" size="40">{{ option.icon }}</v-icon><br>
+                                                        <label>{{ option.label }}</label>
+                                                    </v-btn>      
+                                                    
+                                                    
                                                     </v-btn-toggle> 
                                                     <div class="text-red-800" v-if="formSubmitted && !form.dimension_form.rate_score[index]">{{ 'This selection is required' }}</div>
                                                 </div>
-                                                <div class="overflow-hidden mb-3" v-if="form.dimension_form.rate_score[index]">
+                                                <div class="overflow-hidden mb-3">
                                                     <div>How important is this attribute?</div>
                                                     <div>
                                                         <div class="ml-2 mb-3">
@@ -575,8 +572,6 @@ watch(
                                                     </div>
 
                                                 </div>
-
-                                  
                                             
 
                                         </v-card>                     
