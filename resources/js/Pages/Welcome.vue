@@ -128,7 +128,6 @@ const goToDivisions = () => {
                 text-align: center;
                 margin-left: 10%;
                 margin-right: 10%;
-                margin-top: 10%;
             "
         >
             Customer Relation Management System
@@ -138,8 +137,12 @@ const goToDivisions = () => {
 
 <style>
 #app {
+<<<<<<< HEAD
     background-image: url("/images/dar-logo.jpg");
     background-size: cover;
+=======
+    background-image: url("/images/dar-bg.png");
+>>>>>>> 95ac0969d4ba3a4579dd6ee65c01c7de09b68299
     width: 100vw;
     height: 100vh;
     z-index: 1;

@@ -1,0 +1,21 @@
+#app {
+<<<<<<< HEAD
+    background: url("/images/dar-wtf.gif");
+=======
+    background: url(https://cdn.dribbble.com/users/6117646/screenshots/14975149/media/8f26446e227baeb76f1ae01e8dc1c558.gif);
+>>>>>>> captcha
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+<<<<<<< HEAD
+    /* display: flex; */
+    justify-content: contain;
+=======
+    display: flex;
+    justify-content: center;
+>>>>>>> captcha
+    align-items: center;
+}

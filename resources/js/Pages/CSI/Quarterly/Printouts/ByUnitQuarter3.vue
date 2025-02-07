@@ -21,7 +21,7 @@
                 data-aos-duration="500" 
                 data-aos-delay="500"
                 style="width:40px; height:40px; margin-right:10px" 
-                src="../../../../../../public/images/dost-logo.jpg" 
+                src="../../../../../../public/images/dar-logo.jpg" 
                 alt="..">
                 <span style="text-align:center"> 
                     CUSTOMER SATISFACTION FEEDBACK <br>SUMMARY REPORT FOR
