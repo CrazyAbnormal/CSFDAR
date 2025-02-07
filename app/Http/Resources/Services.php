@@ -17,8 +17,8 @@ class Services extends JsonResource
     {
         return [
             'id' => $this->id,
-            'services_name' => $this->services_name,    
-            'units'=> $this->units ? Unit::collection($this->units) : [],
+            'name' => $this->services_name,
+            'slug' => $this->slug,     
         ];
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Resources\PSTO as PSTOResource;
 use App\Http\Resources\Unit as UnitResource;
 use App\Http\Resources\Account as AccountResource;
+use App\Http\Resources\Division;
 use App\Http\Resources\Services as ServicesResource;
 use App\Http\Resources\UnitSubUnit as UnitSubUnitResource;
 
@@ -27,7 +28,7 @@ class AccountController extends Controller
         $user = Auth::user();
         $search = $request->search;
 
-        $regions = Region::all();
+        $divisions = Division::all();
         $services = Services::all();
 
         $accounts = User::when($search, function ($query,  $search) {
@@ -44,7 +45,7 @@ class AccountController extends Controller
 
         return Inertia::render('Account/Index')
                     ->with('accounts', $data)
-                    ->with('regions', $regions)
+                    ->with('divisions', $divisions)
                     ->with('services', $services);
     }
 

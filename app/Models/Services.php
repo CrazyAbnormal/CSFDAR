@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Services extends Model
 {
-    use HasFactory;
     protected $fillable = [
-        'services_name',
-        'slug',
+        'name',
+        'division_id',
+        'sections_id'
     ];
 
-    public function units()
+    public function division()
     {
-        return $this->hasMany(Unit::class);
+        return $this->belongsTo(Divisions::class, 'division_id');
     }
 
-
+    public function section()
+    {
+        return $this->belongsTo(Sections::class, 'sections_id');
+    }
 }

@@ -18,17 +18,15 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        $this->call(RegionSeeder::class);
+        
         $this->call(UserSeeder::class);
         $this->call(DimensionSeeder::class);
         $this->call(CcQuestionSeeder::class);
-        $this->call(ServicesSeeder::class);
-        $this->call(UnitSeeder::class);
-        $this->call(SubUnitSeeder::class);
-        $this->call(PSTOSeeder::class);
-        $this->call(UnitPSTOSeeder::class);
-        $this->call(SubUnitPSTOSeeder::class);
-        $this->call(SubUnitTypeSeeder::class);
+        $this->call(serviceSeeder::class);
+        $this->call(divisionSeeder::class);
+        $this->call(sectionSeeder::class);
+        $this->call(ShowDateCSFFormSeeder::class);
+        
      
     }
 

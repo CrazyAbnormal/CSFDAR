@@ -1,0 +1,1 @@
+import{_ as t}from"./dost-logo-B4Huuyod.js";import{o,c as s,w as a,a as r,u as i,m as n}from"./app-DYbgwT7h.js";const m={__name:"AuthenticationCardLogo",setup(_){return(p,e)=>(o(),s(i(n),{href:"/"},{default:a(()=>e[0]||(e[0]=[r("img",{class:"w-16 h-16",viewBox:"0 0 48 48",fill:"none",src:t,style:{height:"150px",width:"150px"}},null,-1)])),_:1}))}};export{m as _};

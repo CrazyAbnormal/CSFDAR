@@ -24,7 +24,7 @@ class AssignatoreesController extends Controller
             $query->where('name', 'like', '%' . $search . '%')
                   ->orWhere('designation', 'like', '%' . $search . '%');
         })
-        ->where('region_id', $user->region_id)
+        ->where('division_id', $user->division_id)
         ->orderByDesc('created_at')
         ->paginate(10);
 
@@ -38,7 +38,7 @@ class AssignatoreesController extends Controller
         $user = Auth::user();
 
         $assignatoree = new Assignatorees();
-        $assignatoree->region_id = $user->region_id;
+        $assignatoree->division_id = $user->division_id;
         $assignatoree->name = $request->name;
         $assignatoree->designation = $request->designation;
         $assignatoree->save();

@@ -14,19 +14,19 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $user = new User();
-        $user->name = 'SUPER ADMIN';
-        $user->email = 'dost.ro9@gmail.com';
+        $user->name = 'PACCD';
+        $user->email = 'paccd.darzds@gmail.com';
         $user->account_type = 'admin';
-        $user->password = bcrypt('dost-superadmin');
-        $user->region_id = 10;
+        $user->password = bcrypt('dar-paccd');
+        $user->divisions_id = 1;
         $user->save();
 
         $user = new User();
-        $user->name = 'ORD PALNNING';
-        $user->email = 'ord.planning@gmail.com';
-        $user->account_type = 'planning';
-        $user->password = bcrypt('dost-planning');
-        $user->region_id = 10;
+        $user->name = 'PBDD';
+        $user->email = 'pbdd.darzds@gmail.com';
+        $user->account_type = 'pbdd';
+        $user->password = bcrypt('dar-pbdd');
+        $user->divisions_id = 2;
         $user->save();
     }
 }

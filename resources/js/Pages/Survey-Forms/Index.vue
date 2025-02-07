@@ -9,10 +9,9 @@ import Swal from 'sweetalert2';
  const props = defineProps({
         cc_questions: Object,
         dimensions: Object, 
-        unit: Object,
-        sub_unit: Object,  
-        unit_psto: Object,
-        sub_unit_psto: Object,   
+        service: Object,    // Changed from services to service (single service)
+        division: Object,   // Added division
+        section: Object,    // Added section
         status: String,
         errors: Object,
         captcha_img: String,
@@ -75,21 +74,24 @@ const getCurrentDate = () => {
       return `${year}-${month}-${day}`;
 };
 const form = reactive({
-    region_id: null,
+    division_id: null,
     service_id: null,
-    unit_id: null,
-    sub_unit_id: null,
-    psto_id: null,
+    section_id: null,
+    
+
     date: getCurrentDate(),
     client_type: null,
     sub_unit_type: null,
+
     email: null,
     name: null,
     sex: null,
     age_group: null,
+
     pwd: 0,
     pregnant: 0,
     senior_citizen: 0,
+
     cc1: null,
     cc2: null,
     cc3: null,
@@ -97,6 +99,7 @@ const form = reactive({
     comment: null,
     is_complaint: false,
     indication: null,
+
     // signature: null,
     dimension_form: {
         id: [],
@@ -148,12 +151,9 @@ onMounted(() => {
     const searchParams = new URLSearchParams(currentURL.split("?")[1]);
 
     // Get region_id, service_id, and unit_id values
-    form.region_id = searchParams.get("region_id");
+    form.division_id = searchParams.get("division_id");
     form.service_id = searchParams.get("service_id");
-    form.unit_id = searchParams.get("unit_id");
-    form.sub_unit_id = searchParams.get("sub_unit_id");
-    form.psto_id = searchParams.get("psto_id");
-    form.sub_unit_type = searchParams.get("sub_unit_type");
+    form.section_id = searchParams.get("section_id");
     form.current_url =currentURL; 
 
     Swal.fire({
@@ -308,7 +308,7 @@ watch(
                                         data-aos-delay="500"
                                         class="mx-auto sm:mb-0" 
                                         style="width:200px; height:200px" 
-                                        src="../../../../public/images/dost-logo.jpg" 
+                                        src="../../../../public/images/dar-logo.jpg" 
                                         alt="..">
                                     </div>
                                     <span 
@@ -316,7 +316,7 @@ watch(
                                     data-aos="fade-down" 
                                     data-aos-duration="500" 
                                     data-aos-delay="500"
-                                    >CUSTOMER SATISFACTION FEEDBACK 
+                                    >CUSTOMER SATISFACTION FEEDBACK
                                 </span><br>
 
                                 
@@ -336,11 +336,9 @@ watch(
                                         <div class="p-5">
                                             <a href="#">
                                                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                                    <span> {{ unit.data[0].unit_name }} </span> <br>
-                                                    <span v-if="sub_unit.data.length > 0"> {{ sub_unit.data[0].sub_unit_name }}</span>
-                                                    <span v-if="unit_psto.data.length > 0"> {{ unit_psto.data[0].psto['psto_name'] }} </span>  
-                                                    <span v-if="sub_unit_psto.data.length > 0" class="ml-3"> {{ sub_unit_psto.data[0].psto['psto_name'] }}</span>
-                                                    <span v-if="form.sub_unit_type" class="ml-3"> {{ form.sub_unit_type }}</span>
+                                                    <span>{{ props.division.name }}</span> <br>
+                                                    <span v-if="props.section">{{ props.section.name }}</span><br>
+                                                    <span>{{ props.service.name }}</span>
                                                 </h5>
                                             </a>
                                             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 ">This questionaire aims to solicit your honest assessment of our services. Please take a minute in filling out this form and help us serve you better.</p>
@@ -428,28 +426,7 @@ watch(
                                                     </v-col >
 
                                                 </v-row>
-<!-- 
-                                                <div class="border border-w-2 p-3 mb-5">
-                                                    <div>
-                                                        Other Informations
-                                                        (<span class="text-blue-500">Optional</span>)
-                                                    </div>
-                                                    <v-row>
-                                                        <v-col cols="12"  md="" sm="4" class="flex items-center ps-4  rounded" style="margin-bottom:-25px">
-                                                            <input v-model="form.pwd" id="bordered-checkbox-2" type="checkbox" value="" name="bordered-checkbox" class="w-4 h-4 text-blue-600 bg-gray-100  rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                            <label for="bordered-checkbox-2" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Person with Disability</label>
-                                                        </v-col>
-                                                        <v-col cols="12"  md="" sm="4" class="flex items-center ps-4  rounded" style="margin-bottom:-25px">
-                                                            <input  v-model="form.pregnant" id="bordered-checkbox-3" type="checkbox" value="" name="bordered-checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                            <label for="bordered-checkbox-3" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pregnant Woman</label>
-                                                        </v-col>
-                                                        <v-col cols="12"  md="" sm="4" class="flex items-center ps-4  rounded " style="margin-bottom:-25px">
-                                                            <input  v-model="form.senior_citizen" id="bordered-checkbox-4" type="checkbox" value="" name="bordered-checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                            <label for="bordered-checkbox-4" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Senior Citizen</label>
-                                                        </v-col>
-                    
-                                                    </v-row>
-                                                </div> -->
+
 
 
                                             </div>
@@ -593,7 +570,7 @@ watch(
                             >
                                 <div class="p-3 font-bold text-lg">Considering your complete experience with our agency, how likely would you recommend our services to others? <span class="text-red-800">*</span></div>
 
-                                    <div class="ml-2 mb-3 mx-auto my-auto mb-5 d-flex justify-center text-center" style="margin-right: 50px ; margin-left: 50px">
+                                    <div class="mx-auto my-auto mb-5 flex justify-center text-center px-[50px]">
                                         <v-btn-toggle 
                                             v-model="form.recommend_rate_score" 
                                             mandatory 
@@ -648,45 +625,7 @@ watch(
                                 Please input the reason/s why you have rated low.</div>
                             </v-card>
 
-                            <!-- <v-card 
-                                data-aos="zoom-out-up" 
-                                data-aos-duration="1000" 
-                                data-aos-delay="500" 
-                                class="mb-5 mx-auto"
-                            >
-                                <div class="p-3 mt-0 font-bold text-lg">Please indicate other important attribute/s which you think is important to your needs. (
-                                    <span class="text-blue-400">Optional</span>
-                                    )</div>
-                                    <v-container fluid>
-                                        <v-textarea
-                                            v-model="form.indication"
-                                            placeholder="Input here"
-                                        ></v-textarea>
-                                        
-                                    </v-container>
-                            </v-card> -->
-
-                            <!-- <v-card 
-                                data-aos="zoom-out-up" 
-                                data-aos-duration="1000" 
-                                data-aos-delay="500" 
-                                class="mb-5 mx-auto"
-                                >
-                                <div class="p-3 mt-0 font-bold text-lg" >Please write your signature on the box. (
-                                    <span class="text-blue-400">Optional</span>
-                                    )</div>
-                                    <v-container class="text-center">
-                                        <v-row>
-                                            <v-col >
-                                            <div>
-                                                <canvas class="signature-pad mb-3 mx-auto" ref="signaturePad">
-                                                </canvas>
-                                                </div>
-                                                <v-btn @click="clearSignature" class="">Clear</v-btn>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                            </v-card> -->
+                           
 
                             <v-card
                                 data-aos="zoom-out-up" 
@@ -696,11 +635,16 @@ watch(
                             >
                                 <v-row   class="mt-5 mb-5 text-center">
 
-                                    <v-col cols="6" class="text-right">
+                                    <!-- <v-col cols="6" class="text-right">
                                         <a href="/" class="btn bg-secondary">
                                             <v-btn class="bg-secondary">Back</v-btn>
                                         </a>
+                                    </v-col> -->
+
+                                    <v-col cols="6" class="text-right">
+                                        <v-btn class="bg-secondary" @click="goBack">Back</v-btn>
                                     </v-col>
+
                                     <v-col cols="6" class="text-left">
                                         <v-btn color="success" type="submit" class="mr-2" prepend-icon="mdi-send" :disabled="form.processing || form.is_complaint && !form.comment">Submit</v-btn>
                                     </v-col>

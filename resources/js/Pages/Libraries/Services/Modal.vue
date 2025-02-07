@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch, ref, onMounted } from "vue";
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router } from "@inertiajs/vue3";
+import Sections from "@/Pages/Sections.vue";
 const emit = defineEmits(["reloadAccounts", "input"]);
 const props = defineProps({
     account: {
@@ -17,30 +18,27 @@ const props = defineProps({
     },
     action: {
         type: String,
-    }
-
+    },
 });
 
 watch(
     () => props.account,
     (value) => {
-        if(value){
+        if (value) {
             form.id = value.id;
             form.name = value.name;
             form.email = value.email;
             form.selected_region = value.region;
         }
     }
-     
 );
 
 const form = reactive({
     id: null,
-    name:null,
+    name: null,
     email: null,
     selected_region: [],
 });
-
 
 const show_form_modal = ref(false);
 watch(
@@ -50,8 +48,7 @@ watch(
     }
 );
 
-
-const action_clicked = ref('');
+const action_clicked = ref("");
 watch(
     () => props.action,
     (value) => {
@@ -60,28 +57,20 @@ watch(
 );
 
 const saveAccount = async () => {
-   
-    if(action_clicked.value == 'Add'){
-        router.post('/accounts/add', form );
- 
+    if (action_clicked.value == "Add") {
+        router.post("/accounts/add", form);
+    } else if (action_clicked.value == "Update") {
+        router.post("/accounts/update", form);
     }
-    else if(action_clicked.value == 'Update'){
-        router.post('/accounts/update', form );
-    }
-   
+
     emit("input", false);
     emit("reloadAccounts");
 };
-
-
 
 const closeDialog = (value) => {
     emit("input", value);
     emit("reloadAccounts");
 };
-
-
-
 </script>
 
 <template>
@@ -91,9 +80,8 @@ const closeDialog = (value) => {
                 <span class="text-h5">{{ props.action }} Account</span>
             </v-card-title>
             <v-card-text>
-                
-                <v-row style="margin-bottom:-30px;">
-                    <v-col cols="12" >
+                <v-row style="margin-bottom: -30px">
+                    <v-col cols="12">
                         <v-text-field
                             prepend-icon="mdi-account"
                             label="Name*"
@@ -103,8 +91,8 @@ const closeDialog = (value) => {
                     </v-col>
                 </v-row>
 
-                <v-row style="margin-bottom:-30px;">
-                    <v-col cols="12" >
+                <v-row style="margin-bottom: -30px">
+                    <v-col cols="12">
                         <v-text-field
                             prepend-icon="mdi-email"
                             label="Email*"
@@ -117,13 +105,13 @@ const closeDialog = (value) => {
                 </v-row>
 
                 <v-row>
-                   <v-col cols="12">
+                    <v-col cols="12">
                         <v-select
                             prepend-icon="mdi-map-marker"
                             label="Region*"
-                            v-model="form.selected_region"
+                            v-model="form.selected_section"
                             variant="solo"
-                            :items="regions"
+                            items="section"
                             item-title="name"
                             item-value="id"
                             required

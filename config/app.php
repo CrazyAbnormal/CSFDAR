@@ -166,10 +166,11 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        Illuminate\Routing\RoutingServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\FortifyServiceProvider::class,
+        // App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
@@ -194,6 +195,7 @@ return [
     'aliases' => [
         // ...
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
+        'Route' => Illuminate\Support\Facades\Route::class,
     ],
 
 ];

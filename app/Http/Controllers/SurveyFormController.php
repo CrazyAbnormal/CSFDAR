@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 use Inertia\Inertia;
-use App\Models\Unit;
-use App\Models\Services;
-use App\Models\Region;
+
 use App\Models\CSFForm;
-use App\Models\SubUnit;
 use App\Models\Customer;
 use App\Models\Dimension;
 use App\Models\CcQuestion;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Log;
+
 use App\Models\CustomerComment;
-use App\Models\UnitPsto;
-use App\Models\psto;
 use App\Models\CustomerCCRating;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Support\Facades\DB;
-use App\Models\SubUnitPsto;
-use App\Models\SubUnitType;
+use App\Models\ShowDateCsfForm;
 use App\Models\CustomerAttributeRating;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\SurveyFormRequest;
@@ -27,48 +24,40 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\CustomerRecommendationRating;
 use App\Models\CustomerOtherAttributeIndication;
 
-use App\Http\Resources\Unit as UnitResource;
-use App\Http\Resources\SubUnit as SubUnitResource;
-use App\Http\Resources\UnitPSTO as UnitPSTOResource;
-use App\Http\Resources\SubUnitPSTO as SubUnitPSTOResource;
-use App\Http\Resources\SubUnitType as SubUnitTypeResource;
+use App\Http\Resources\ShowDateCSFForm as ShowDateCSFFormResource;
+use App\Models\Divisions;
+use App\Models\Services;
+use App\Models\Sections;
 
-use App\Models\CustomerSignature;
+// use App\Models\CustomerSignature;
 
 class SurveyFormController extends Controller
 {
+
+    // to render a view with data fetched from the database
     public function index(Request $request)
     {
-        $cc_questions = CcQuestion::all();
-        $dimensions = Dimension::all();
-        $unit = Unit::where('id', $request->unit_id)->get();
-        $sub_unit = SubUnit::where('unit_id', $request->unit_id)
-                           ->where('id', $request->sub_unit_id)->get();
-        $unit_psto = UnitPsto::where('unit_id', $request->unit_id)
-                             ->where('psto_id', $request->psto_id)->get();
-        $sub_unit_psto = SubUnitPsto::where('sub_unit_id', $request->sub_unit_id)
-                                     ->where('psto_id', $request->psto_id)->get();
+        // get the data if the date will be displayed or not
+        $date_display = ShowDateCsfForm::all(); // retrieves all records from the ShowDateCsfForm model/table in the database
+
+        $cc_questions = CcQuestion::all(); // retrieves all records from the CcQuestion model/table
+        $dimensions = Dimension::all(); // retrieves all records from the Dimension model/table
+        $services = Services::all(); // retrieves all records from the Services model/table
         
-        $unit = UnitResource::collection($unit);
-        $sub_unit = SubUnitResource::collection($sub_unit);
-        $unit_psto = UnitPSTOResource::collection($unit_psto);
-        $sub_unit_psto = SubUnitPSTOResource::collection($sub_unit_psto);
 
         return Inertia::render('Survey-Forms/Index')
             ->with('cc_questions', $cc_questions)
             ->with('dimensions', $dimensions)
-            ->with('unit', $unit)
-            ->with('sub_unit', $sub_unit)
-            ->with('unit_psto', $unit_psto)
-            ->with('sub_unit_psto', $sub_unit_psto);  
+            ->with('services', $services)
+            ->with('date_display', $date_display);  
     }
 
 
-
+ 
     // SurveyFormRequest
     public function store(SurveyFormRequest $request)
     {       
-        // dd($request->all());
+        //dd($request->all());
         try{
             DB::beginTransaction();    
            
@@ -149,18 +138,16 @@ class SurveyFormController extends Controller
    
     }
 
-    public function saveCSFForm($request, $customer){
+    public function saveCSFForm($request, $customer)
+    {
         $csf_form = new CSFForm();
         $csf_form->customer_id = $customer->id;
-        $csf_form->region_id = $request->region_id;
-        $csf_form->service_id = $request->service_id;
-        $csf_form->unit_id = $request->unit_id;
-        if($request->sub_unit_id != "null"){
-            $csf_form->sub_unit_id = $request->sub_unit_id;
+        $csf_form->division_id = $request->division_id;
+        if($request->section_id != "null"){
+            $csf_form->section_id = $request->section_id;
         }
-        $csf_form->psto_id = $request->psto_id;
+        $csf_form->services_id = $request->services_id;
         $csf_form->client_type = $request->client_type;
-        $csf_form->sub_unit_type = $request->sub_unit_type;
         if($request->date){
             $csf_form->created_at = $request->date;
             $csf_form->updated_at = $request->date;
@@ -225,166 +212,99 @@ class SurveyFormController extends Controller
        return $customer_indication;
    }
 
+   // to fetch and display all the contents of the divisions table from the database
+    public function divisions_index(Request $request)
+    {
+        $divisions = Divisions::all();
+        return Inertia::render('Divisions')
+                        ->with('divisions', $divisions);
+    }
 
-   public function regions_index(Request $request){
-        $regions = Region::all();
-        return Inertia::render('Region')
-                      ->with('regions', $regions );
-   }
+    // public function divisions_index(Request $request)
+    // {
+    //     $divisions = Divisions::select('id', 'name')->get(); // or 'short_name' if that's the column you want
+    //     return Inertia::render('Divisions', [
+    //         'divisions' => $divisions
+    //     ]);
+    // 
 
-   public function services_index(Request $request){
-        $services = Services::all();
-        //selected region
-        $region = Region::where('id',$request->region_id)->first();
+   // to fetch and display all the contents of the services table from the database
+   // Fetches services linked to a specific division
+    public function services_index(Request $request, $division_id)
+    {
+       $divisions = Divisions::findOrFail($division_id);
+       
+       // Get services directly linked to division
+       $services = Services::where('division_id', $division_id)
+                         ->whereNull('section_id')
+                         ->get();
 
         return Inertia::render('Services')
-                        ->with('region_id', $request->region_id )
-                        ->with('region', $region )
-                        ->with('services', $services );
-    }
-
-    public function service_units_index(Request $request){
-        // dd($request->all());
-        $service_units = Unit::where('services_id', $request->service_id)->get();
-        //selected region
-        $region = Region::where('id',$request->region_id)->first();
-        //selected service
-        $service = Services::where('id', $request->service_id)->first();
-
-        return Inertia::render('Units')
-                        ->with('region_id', $request->region_id)
-                        ->with('region', $region)
-                        ->with('service_id', $request->service_id)
-                        ->with('service', $service)
-                        ->with('service_units', $service_units);
-    }
-
-    public function getUnitSubunits(Request $request){
-        $sub_units = SubUnit::where('unit_id', $request->unit_id)->get();
-        //selected region
-        $region = Region::where('id',$request->region_id)->first();
-        //selected unit
-        $unit = Unit::where('id', $request->unit_id)->first();
-
-        if(sizeof($sub_units) > 0){
-            return Inertia::render('SubUnits')
-                        ->with('region_id', $request->region_id)
-                        ->with('region', $region)
-                        ->with('service_id', $request->service_id)
-                        ->with('unit_id', $request->unit_id)
-                        ->with('unit', $unit)
-                        ->with('sub_units', $sub_units);
-        }
-        
-        else{
-            //check if this unit has psto
-            $unit_pstos = UnitPSTO::where('unit_id', $request->unit_id)->get();
-            $psto_ids = $unit_pstos->pluck('psto_id');
-            $pstos = psto::where('region_id',$request->region_id)
-                    ->whereIn('id',$psto_ids) 
-                    ->get();
-
-            if(sizeof($pstos) > 0){
-                return Inertia::render('PSTOs')
-                            ->with('region_id', $request->region_id)
-                            ->with('region', $region)
-                            ->with('service_id', $request->service_id)
-                            ->with('unit_id', $request->unit_id)
-                            ->with('unit', $unit)
-                            ->with('sub_unit_id', $request->sub_unit_id)
-                            ->with('pstos', $pstos);
-            }
-            else{
-                // redirect to url of csf form
-                $url = '/services/csf?region_id='.$request->region_id.
-                '&service_id='.$request->service_id.
-                '&unit_id='.$request->unit_id;
-
-                return Inertia::location($url);
-            }
-
-
-        }
-
-       
-    }
-
-    public function getSubUnitPSTO(Request $request){
-        $sub_unit_pstos = SubUnitPSTO::where('sub_unit_id', $request->sub_unit_id)->get();
-        $psto_ids = $sub_unit_pstos->pluck('psto_id');
-
-        $pstos = psto::whereIn('id',$psto_ids)
-                    ->where('region_id', $request->region_id)
-                    ->get();
-        $pstos = psto::whereIn('id',$psto_ids)
-        ->where('region_id', $request->region_id)
-        ->get();
-        
-         //selected region
-         $region = Region::where('id',$request->region_id)->first();    
-        //selected sub-unit
-        $sub_unit = SubUnit::where('id', $request->sub_unit_id)->first();
- 
-
-        if(sizeof($pstos) > 0){
-            return Inertia::render('PSTOs')
-                        ->with('region_id', $request->region_id)
-                        ->with('region', $region)
-                        ->with('service_id', $request->service_id)
-                        ->with('unit_id', $request->unit_id)
-                        ->with('sub_unit_id', $request->sub_unit_id)
-                        ->with('sub_unit', $sub_unit)
-                        ->with('pstos', $pstos);
-        }
-        
-        else{
-            // redirect to url of csf form
-
-            $url = '/services/csf?region_id='.$request->region_id.
-                                '&service_id='.$request->service_id.
-                                '&unit_id='.$request->unit_id.
-                                '&sub_unit_id='.$request->sub_unit_id.
-                                '&psto_id='.$request->psto_id;
-
-            return Inertia::location($url);
-        }
-
-       
+                ->with('services', $services)
+                ->with('divisions', $divisions)
+                ->with('division_id', (int)$division_id);
     }
 
 
-    public function getSubUnitTypes(Request $request){
-        $types = SubUnitType::where('sub_unit_id', $request->sub_unit_id)
-                    ->where('region_id', $request->region_id)->get();
-        //selected region
-        $region = Region::where('id',$request->region_id)->first();    
-        //selected sub-unit
-        $sub_unit = SubUnit::where('id',$request->sub_unit_id)->first();
-
-        if(sizeof($types) > 0){
-            return Inertia::render('SubUnitTypes')
-                        ->with('region_id', $request->region_id)
-                        ->with('region', $region)
-                        ->with('service_id', $request->service_id)
-                        ->with('unit_id', $request->unit_id)
-                        ->with('sub_unit_id', $request->sub_unit_id)
-                        ->with('sub_unit', $sub_unit)
-                        ->with('types', $types);
-        }
+    public function sections_index($division_id)
+    {
+        $divisions = Divisions::findOrFail($division_id);
+        $sections = Sections::where('division_id', $division_id)->get();
         
-        else{
-            // redirect to url of csf form
+        Log::info('Sections found:', ['sections' => $sections]);
+        
+        return Inertia::render('Sections')
+              ->with('sections', $sections)
+              ->with('divisions', $divisions)
+              ->with('division_id', (int)$division_id);
 
-            $url = '/services/csf?region_id='.$request->region_id.
-                                '&service_id='.$request->service_id.
-                                '&unit_id='.$request->unit_id.
-                                '&sub_unit_id='.$request->sub_unit_id.
-                                '&type_id='.$request->type_id;
+    }
 
-            return Inertia::location($url);
+
+    //Fetches services linked to a specific section
+    public function section_services($section_id)
+    {
+        Log::info('Section services called with ID:', ['section_id' => $section_id]);
+        
+        $section = Sections::findOrFail($section_id);
+        $divisions = Divisions::findOrFail($section->division_id);
+        
+        $services = Services::where('section_id', $section_id)->get();
+        
+        Log::info('Services found:', ['services' => $services]);
+        
+        return Inertia::render('Services', [
+            'services' => $services,
+            'divisions' => $divisions,
+            'division_id' => (int)$divisions->id,
+            'section' => $section
+        ]);
+    }
+
+
+   
+    // to get the contents of each division from the database. This part checks if the division has a section or if it is null. If sections exists, it will go to the sections page.
+    // If the section is null, it checks if the division has services. If it exist it will go to the services page.
+    public function getDivisionContent($division_id)
+    {
+        $divisions = Divisions::findOrFail($division_id);
+        $sections = Sections::where('division_id', $division_id)->get();
+
+        if ($sections->isNotEmpty()) {
+            // If sections exist, go to sections page
+            return $this->sections_index($division_id);
+        } else {
+            // Check for direct services under the division
+            $services = Services::where('division_id', $division_id)
+                            ->whereNull('section_id')
+                            ->get();
+                            
+            return Inertia::render('Services', [
+                'services' => $services,
+                'divisions' => $divisions,
+                'division_id' => (int)$division_id
+            ]);
         }
-
-       
     }
 
     

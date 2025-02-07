@@ -3,18 +3,13 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\psto;
-use App\Models\Unit;
+
 use Inertia\Inertia;
 use App\Models\Assignatorees;
 use App\Models\CSFForm;
 use App\Models\SubUnit;
 use App\Models\Services;
-use App\Models\UnitPsto;
 use App\Models\Dimension;
-use App\Models\SubUnitPsto;
-use App\Models\SubUnitType;
-use App\Models\UnitSubUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CustomerAttributeRating;
@@ -23,10 +18,6 @@ use App\Models\CustomerCCRating;
 use App\Http\Resources\Unit as UnitResource;
 use App\Models\CustomerRecommendationRating;
 use App\Http\Resources\Services as ServiceResource;
-use App\Http\Resources\SubUnit as SubUnitResource;
-use App\Http\Resources\UnitPSTO as UnitPSTOResource;
-use App\Http\Resources\SubUnitPSTO as SubUnitPSTOResource;
-use App\Http\Resources\UnitSubUnit as UnitSubUnitResource;
 use App\Http\Resources\CustomerAttributeRatings as CARResource;
 
 class ReportController extends Controller
@@ -40,45 +31,13 @@ class ReportController extends Controller
         $assignatorees = Assignatorees::all();
 
         $dimensions = Dimension::all();
-        $service = Services::findOrFail($request->service_id);
-
-        $units = Unit::where('id',$request->unit_id)->get();
-        $unit = UnitResource::collection($units);
-
-        //get unit pstos
-        $unit_pstos = UnitPSTO::where('unit_id', $request->unit_id)->get();
-        $psto_ids = $unit_pstos->pluck('psto_id');
-
-        $unit_pstos = psto::whereIn('id',$psto_ids)
-                    ->where('region_id', $user->region_id)
-                    ->get();
-
- 
-        //get sub unit pstos
-        $sub_unit_pstos = SubUnitPSTO::where('sub_unit_id', $request->sub_unit_id)->get();
-        $psto_ids = $sub_unit_pstos->pluck('psto_id');
-
-        $sub_unit_pstos = psto::whereIn('id',$psto_ids)
-                    ->where('region_id', $user->region_id)
-                    ->get();
-
-        $sub_unit_types = SubUnitType::where('sub_unit_id', $request->sub_unit_id)->get();
-
-        $sub_unit= [];
-        $sub_unit =  SubUnit::when($request->sub_unit_id, function ($query, $sub_unit_id) {
-            $query->where('id', $sub_unit_id);
-        })->get();
+        $services = Services::findOrFail($request->service_id);
 
         return Inertia::render('CSI/Index')
             ->with('assignatorees', $assignatorees)
             ->with('dimensions', $dimensions)
-            ->with('service', $service)
-            ->with('unit', $unit)
-            ->with('unit_pstos', $unit_pstos)
-            ->with('sub_unit_pstos', $sub_unit_pstos)
-            ->with('sub_unit_types', $sub_unit_types)
-            ->with('user', $user)
-            ->with('sub_unit', $sub_unit);
+            ->with('service', $services)
+            ->with('user', $user);
     }
 
 
@@ -88,36 +47,12 @@ class ReportController extends Controller
         $user = Auth::user();
 
         $dimensions = Dimension::all();
-        $service = Services::findOrFail($request->service_id);
+        $services = Services::findOrFail($request->service_id);
 
-        $units = Unit::where('id',$request->unit_id)->get();
-        $unit = UnitResource::collection($units);
-
-         //get unit pstos
-         $unit_pstos = UnitPSTO::where('unit_id', $request->unit_id)->get();
-         $psto_ids = $unit_pstos->pluck('psto_id');
- 
-         $unit_pstos = psto::whereIn('id',$psto_ids)
-                     ->where('region_id', $user->region_id)
-                     ->get();
-
-        //get sub unit pstos
-        $sub_unit_pstos = SubUnitPSTO::where('sub_unit_id', $request->sub_unit_id)->get();
-        $psto_ids = $sub_unit_pstos->pluck('psto_id');
-
-        $sub_unit_pstos = psto::whereIn('id',$psto_ids)
-                    ->where('region_id', $user->region_id)
-                    ->get();
-
-        $sub_unit_types = SubUnitType::where('sub_unit_id',  $request->sub_unit_id)->get();
 
         return Inertia::render('Libraries/Service-Units/Views/View')
             ->with('dimensions', $dimensions)
-            ->with('service', $service)
-            ->with('unit', $unit)
-            ->with('unit_pstos', $unit_pstos)
-            ->with('sub_unit_pstos', $sub_unit_pstos)
-            ->with('sub_unit_types', $sub_unit_types)
+            ->with('service', $services)
             ->with('user', $user);
     
     }
@@ -126,40 +61,40 @@ class ReportController extends Controller
     public function generateReports(Request $request )
     {
         //dd($request->all());
-        $psto_id = null;
-        if($request->selected_unit_psto){
-            $psto_id = $request->selected_unit_psto;
-        }
-        else if($request->selected_sub_unit_psto){
-            $psto_id = $request->selected_sub_unit_psto;
-        }
+        // $psto_id = null;
+        // if($request->selected_unit_psto){
+        //     $psto_id = $request->selected_unit_psto;
+        // }
+        // else if($request->selected_sub_unit_psto){
+        //     $psto_id = $request->selected_sub_unit_psto;
+        // }
        
         //get user
         $user = Auth::user();
 
         if($request->csi_type == 'By Date'){
-            return $this->generateCSIByUnitByDate($request , $user->region_id, $psto_id);
+            return $this->generateCSIByUnitByDate($request , $user->division_id, $service_id);
         }
         else if($request->csi_type == "By Month"){
-            return $this->generateCSIByUnitMonthly($request , $user->region_id, $psto_id);
+            return $this->generateCSIByUnitMonthly($request , $user->division_id, $service_id);
         }
         else if($request->csi_type == "By Quarter"){
             if($request->selected_quarter == "FIRST QUARTER"){
-                return $this->generateCSIByUnitFirstQuarter($request , $user->region_id, $psto_id);
+                return $this->generateCSIByUnitFirstQuarter($request , $user->division_id, $service_id);
             }
             else if($request->selected_quarter == "SECOND QUARTER"){
-                return $this->generateCSIByUnitSecondQuarter($request , $user->region_id, $psto_id);
+                return $this->generateCSIByUnitSecondQuarter($request , $user->division_id, $service_id);
             }
             else if($request->selected_quarter == "THIRD QUARTER"){
-                return $this->generateCSIByUnitThirdQuarter($request , $user->region_id, $psto_id);
+                return $this->generateCSIByUnitThirdQuarter($request , $user->division_id, $service_id);
             }
             else if($request->selected_quarter == "FOURTH QUARTER"){
-                return $this->generateCSIByUnitFourthQuarter($request , $user->region_id, $psto_id);
+                return $this->generateCSIByUnitFourthQuarter($request , $user->division_id, $service_id);
             }
           
         }
         else if($request->csi_type == "By Year/Annual"){
-            return $this->generateCSIByUnitYearly($request , $user->region_id, $psto_id);  
+            return $this->generateCSIByUnitYearly($request , $user->division_id, $service_id);  
         }
     
     }
@@ -728,6 +663,8 @@ class ReportController extends Controller
             $n_total = $date_range->where('rate_score', 3)->where('dimension_id', $dimensionId)->count();
             $d_total = $date_range->where('rate_score', 2)->where('dimension_id', $dimensionId)->count();
             $vd_total = $date_range->where('rate_score', 1)->where('dimension_id', $dimensionId)->count(); 
+
+            //check if there are respondent who rate 3 or below and add it if theres
 
             // calculation for total score per dimension
             $x_vs_total = $vs_total * 5; 

@@ -9,7 +9,7 @@ class Assignatorees extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'region_id',
+        'division_id',
         'name',
         'designation',
     ];

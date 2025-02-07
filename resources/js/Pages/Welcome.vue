@@ -1,19 +1,36 @@
 <script setup>
-import { Head, Link } from "@inertiajs/vue3";
-import { reactive, watch, ref, onMounted } from "vue";
+// import { Head, Link } from "@inertiajs/vue3";
+// import { reactive, watch, ref, onMounted } from "vue";
+import { Head } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-import * as THREE from "three";
-
+// Initialize AOS
 AOS.init();
 
-defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
-    laravelVersion: String,
-    phpVersion: String,
+// Define props to match your routes and potential data
+const props = defineProps({
+    canLogin: {
+        type: Boolean,
+        default: false,
+    },
+    divisions: {
+        type: Array,
+        default: () => [],
+    },
 });
+
+// Method to navigate to divisions
+// const goToDivisions = () => {
+//     router.get(route("divisions.index"));
+//     // window.location.href = route("divisions.index");
+// };
+
+const goToDivisions = () => {
+    router.visit("/divisions");
+};
 </script>
 
 <template>
@@ -29,20 +46,24 @@ defineProps({
             class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
         >
             <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <img
-                    src="../../../public/images/dar-logo.jpg"
-                    class="h-8"
-                    alt="DAR Logo"
-                />
+                <img src="/images/dar-logo.jpg" class="h-8" alt="DAR Logo" />
                 <span
                     class="self-center text-2xl font-semibold whitespace-nowrap"
-                    >Department of Science and Technology</span
+                    >Department of Agrarian Reform</span
                 >
             </a>
             <div
                 class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"
             >
-                <a href="/services/csf/regions">
+                <!-- Replace Link with a method call -->
+                <!-- <button
+                    @click="goToDivisions"
+                    class="hover:bg-blue flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded md:w-auto hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-blue-500 md:dark:hover:bg-transparent dark:border-gray-700"
+                >
+                    Get Started
+                </button> -->
+
+                <a href="/divisions">
                     <v-btn
                         variant="outlined"
                         id="mega-menu-full-dropdown-button"
@@ -52,6 +73,7 @@ defineProps({
                         Get Started
                     </v-btn>
                 </a>
+
                 <!-- <a :href="route('login')">
                         <button class="mr-3 ml-5 text-blue-800 bg-gray-200 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Login
@@ -112,13 +134,11 @@ defineProps({
             Customer Relation Management System
         </h1>
     </div>
-    <br />
-    <div></div>
 </template>
 
 <style>
 #app {
-    background-image: url("/images/dar-wtf.gif");
+    background-image: url("/images/dar-logo.jpg");
     background-size: cover;
     width: 100vw;
     height: 100vh;

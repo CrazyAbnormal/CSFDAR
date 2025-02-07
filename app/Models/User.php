@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Http\Resources\Division;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable 
+class User extends Authenticatable implements CanResetPassword
 {
     use HasApiTokens;
     use HasFactory;
@@ -61,21 +61,18 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function region(){
-        return $this->HasOne(Region::class, 'id', 'region_id');
+    public function division(){
+        return $this->HasOne(Division::class, 'id', 'region_id');
     }
 
     public function service(){
         return $this->HasOne(Services::class, 'id', 'service_id');
     }
 
-    public function unit(){
-        return $this->HasOne(Unit::class, 'id', 'unit_id');
-    }
+    // public function unit(){
+    //     return $this->HasOne(Unit::class, 'id', 'unit_id');
+    // }
 
-    public function psto(){
-        return $this->HasOne(psto::class, 'id', 'psto_id');
-    }
-
+    
 
 }
